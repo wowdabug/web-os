@@ -1,0 +1,61 @@
+:root {
+	--bg-color: #000000;
+	--text-color: #ffffff;
+	--text-size: 16px;
+	--font: monospace;
+	--terminal-padding: 8px;
+	--cursor-width: 1px;
+	--cursor-margin: 1px;
+	--cursor-blink: 1s;
+	--input-prompt: "> ";
+}
+
+@keyframes blink {
+	0% {
+		visibility: visible;
+	}
+
+	50% {
+		visibility: hidden;
+	}
+}
+
+html, body, #terminal {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+#terminal {
+	padding: var(--terminal-padding);
+	background-color: var(--bg-color);
+	font-size: var(--text-size);
+	font-family: var(--font);
+	color: var(--text-color);
+	box-sizing: border-box;
+	white-space-collapse: preserve;
+	word-break: break-all;
+	display: flex;
+	flex-direction: column;
+}
+
+#input > span::before {
+	content: var(--input-prompt);
+}
+
+#input > span:last-child::after {
+	content: "";
+	background-color: var(--text-color);
+	width: var(--cursor-width);
+	height: 1em;
+	vertical-align: text-bottom;
+	display: inline-block;
+	animation-name: blink;
+	animation-iteration-count: infinite;
+	animation-duration: var(--cursor-blink);
+	animation-timing-function: step-end;
+	margin-left: var(--cursor-margin);
+}

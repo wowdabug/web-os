@@ -1,0 +1,71 @@
+import {
+	saveRuntime,
+	restoreRuntime,
+	resetRuntime,
+	execute
+} from "./runtime.js";
+import {
+	saveIdentifiers,
+	restoreIdentifiers,
+	resetIdentifiers
+} from "./identifier.js";
+import { compile } from "./compiler.js";
+import { outLine } from "../main.js";
+import { logErrors } from "./error.js";
+
+let prevTime;
+
+function startBench() {
+	prevTime = performance.now();
+}
+
+function endBench(prefix, suffix) {
+	const currentTime = performance.now();
+	const deltaTime = currentTime - prevTime;
+	console.log(`${prefix}${deltaTime}${suffix}`);
+}
+
+function saveState() {
+	saveRuntime();
+	saveIdentifiers();
+}
+
+function restoreState() {
+	restoreRuntime();
+	restoreIdentifiers();
+}
+
+export function reset() {
+	resetIdentifiers();
+	resetRuntime();
+}
+
+export async function run(value) {
+	saveState();
+
+	startBench();
+	const program = await compile(value);
+	endBench("Compiled in ", "ms");
+
+	if (program === false) {
+		logErrors();
+		restoreState();
+
+		return false;
+	}
+
+	if (program.length === 0) {
+		return true;
+	}
+
+	startBench();
+	const exitStatus = await execute(program);
+	endBench("Executed in ", "ms");
+
+	if (exitStatus !== 0) {
+		outLine(`Runtime error: exit status ${exitStatus}`);
+		return false;
+	}
+
+	return true;
+}

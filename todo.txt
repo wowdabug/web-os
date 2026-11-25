@@ -1,0 +1,7 @@
+- finish lang
+- system commands
+- file system
+- up + down arrow
+- more shortcuts
+- restructure errors
+- current line, lines in errors
