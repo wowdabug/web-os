@@ -1,9 +1,8 @@
-- commands
-- file system
-- up + down arrow
-- more shortcuts
+- input shortcuts
 - lines
 - load, load_t, jmp, exit checking
+- commands
+- file system
 - reset memory
 - line handling
 - manual switch values in runtime

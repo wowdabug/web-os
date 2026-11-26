@@ -46,7 +46,8 @@ export function strCopy(ptr, str) {
 }
 
 export function varCopy(type, ptr, value) {
-	console.log(`setting address ${ptr} to ${value}`);
+	// console.log(`setting address ${ptr} to ${value}`);
+
 	switch (type) {
 		case dataTypes.i8:
 			memI8[ptr] = value; break;

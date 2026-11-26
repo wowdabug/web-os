@@ -20,7 +20,7 @@
 	}
 }
 
-html, body, #terminal {
+html, body, .terminal {
 	width: 100%;
 	height: 100%;
 }
@@ -29,7 +29,7 @@ body {
 	margin: 0;
 }
 
-#terminal {
+.terminal {
 	padding: var(--terminal-padding);
 	background-color: var(--bg-color);
 	font-size: var(--text-size);
@@ -42,20 +42,30 @@ body {
 	flex-direction: column;
 }
 
-#input > span::before {
+#input::before {
 	content: var(--input-prompt);
 }
 
-#input > span:last-child::after {
+.cursor {
+	position: relative;
+	display: inline-block;
+	width: 0;
+	height: 1em;
+	vertical-align: middle;
+	pointer-events: none;
+}
+
+.cursor::before {
 	content: "";
-	background-color: var(--text-color);
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
 	width: var(--cursor-width);
 	height: 1em;
-	vertical-align: text-bottom;
-	display: inline-block;
+	background-color: var(--text-color);
 	animation-name: blink;
 	animation-iteration-count: infinite;
 	animation-duration: var(--cursor-blink);
 	animation-timing-function: step-end;
-	margin-left: var(--cursor-margin);
 }

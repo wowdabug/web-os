@@ -1,50 +1,10 @@
 import { run } from "../lang/main.js";
 
 const input = document.getElementById("input");
+let beforeCursor = document.createElement("span");
+let afterCursor = document.createElement("span");
 
-let currentInput = input.lastElementChild;
 let inputEnabled = false;
-
-document.addEventListener("keydown", (event) => {
-	if (inputEnabled) {
-		handleKeydown(event);
-	}
-});
-
-function backspace() {
-	currentInput.textContent = currentInput.textContent.slice(0, -1);
-}
-
-function removeLine() {
-	if (input.children.length > 1) {
-		currentInput.remove();
-		currentInput = input.lastElementChild;
-
-		backspace();
-	}
-}
-
-function appendLine() {
-	const span = document.createElement("span");
-
-	currentInput.textContent += "\n";
-	input.appendChild(span);
-	currentInput = span;
-}
-
-function resetInput() {
-	const text = input.textContent;
-	const span = document.createElement("span");
-
-	input.replaceChildren(span);
-	currentInput = span;
-
-	return text;
-}
-
-function appendText(text) {
-	currentInput.textContent += text;
-}
 
 export function enableInput() {
 	inputEnabled = true;
@@ -52,6 +12,47 @@ export function enableInput() {
 
 export function disableInput() {
 	inputEnabled = false;
+}
+
+function backspace() {
+	beforeCursor.textContent = beforeCursor.textContent.slice(0, -1);
+}
+
+function getInput() {
+	return input.textContent;
+}
+
+function resetInput() {
+	beforeCursor.textContent = "";
+	afterCursor.textContent = "";
+}
+
+function appendText(text) {
+	beforeCursor.textContent += text;
+}
+
+function appendLine() {
+	beforeCursor.textContent += "\n";
+}
+
+function shiftLeft() {
+	if (beforeCursor.textContent === "") {
+		return;
+	}
+
+	const text = beforeCursor.textContent.at(-1);
+	beforeCursor.textContent = beforeCursor.textContent.slice(0, -1);
+	afterCursor.textContent = text + afterCursor.textContent;
+}
+
+function shiftRight() {
+	if (afterCursor.textContent === "") {
+		return;
+	}
+
+	const text = afterCursor.textContent[0];
+	afterCursor.textContent = afterCursor.textContent.slice(1);
+	beforeCursor.textContent = beforeCursor.textContent + text;
 }
 
 async function parseInput(value) {
@@ -66,6 +67,10 @@ function handleKeydown(event) {
 	// 	}
 	// }
 
+	if (!inputEnabled) {
+		return;
+	}
+
 	if (event.altKey || event.ctrlKey || event.metaKey) {
 		return;
 	}
@@ -77,22 +82,44 @@ function handleKeydown(event) {
 			appendLine();
 		} else {
 			disableInput();
-			const text = resetInput();
+
+			const text = getInput();
+
+			resetInput();
 			parseInput(text);
 		}
 	}
 
 	if (event.key === "Backspace") {
 		event.preventDefault();
+		backspace();
+	}
 
-		if (currentInput.textContent === "") {
-			removeLine();
-		} else {
-			backspace();
-		}
+	if (event.key === "ArrowLeft") {
+		event.preventDefault();
+		shiftLeft();
+	}
+
+	if (event.key === "ArrowRight") {
+		event.preventDefault();
+		shiftRight();
 	}
 
 	if (event.key.length === 1) {
 		appendText(event.key);
 	}
 }
+
+function main() {
+	const cursor = document.createElement("span");
+
+	cursor.className = "cursor";
+
+	input.appendChild(beforeCursor);
+	input.appendChild(cursor);
+	input.appendChild(afterCursor);
+
+	document.addEventListener("keydown", handleKeydown);
+}
+
+main();
