@@ -23,6 +23,20 @@ function isValidEscape(value) {
 	}
 }
 
+export function isValidMacro(value) {
+	return (
+		value.startsWith("#") &&
+		varRegex.test(value.slice(1))
+	);
+}
+
+// export function isValidPromise(value) {
+// 	return (
+// 		value.startsWith("$") &&
+// 		varRegex.test(value.slice(1))
+// 	);
+// }
+
 export function isValidStr(value) {
 	const validQuotes =
 		value.startsWith("\"") &&

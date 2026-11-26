@@ -1,4 +1,25 @@
+import { getLine } from "./compiler.js";
+import { macros, syntaxKinds } from "./enum.js";
+import { pushError } from "./error.js";
+
 const instsRegex = /\r\n|\n/;
+
+export function parseMacro(rawMacro) {
+	const macroStr = rawMacro.slice(1);
+	const macroCode = macros[macroStr];
+
+	if (macroCode === undefined) {
+		pushError(`macro does not exist: ${macroStr}`);
+		return false;
+	}
+
+	switch (macroCode) {
+		case macros.line:
+			return { kind: syntaxKinds.int, macro: getLine() };
+		default:
+			throw new Error(`Invalid macro value: ${type}`);
+	}
+}
 
 function splitInsts(value) {
 	let insts = value.split(instsRegex);
@@ -47,8 +68,8 @@ function splitInst(value) {
 	return parts;
 }
 
-export function parseInsts(value) {
-	const insts = splitInsts(value);
+export function parseInsts(rawInsts) {
+	const insts = splitInsts(rawInsts);
 
 	for (let i = 0; i < insts.length; ++i) {
 		const parts = splitInst(insts[i]);
@@ -63,8 +84,8 @@ export function parseInsts(value) {
 	return insts;
 }
 
-function parseEscape(value) {
-	switch (value) {
+function parseEscape(rawEscape) {
+	switch (rawEscape) {
 		case "'":
 			return 39;
 		case "\"":
@@ -90,33 +111,33 @@ function parseEscape(value) {
 	}
 }
 
-export function parseStr(value) {
+export function parseStr(rawStr) {
 	let str = "";
 	let escape = false;
 
-	for (let i = 1; i < value.length - 1; ++i) {
+	for (let i = 1; i < rawStr.length - 1; ++i) {
 		if (escape) {
 			escape = false;
-			const code = parseEscape(value[i]);
+			const code = parseEscape(rawStr[i]);
 			str += String.fromCharCode(code);
-		} else if (value[i] === "\\") {
+		} else if (rawStr[i] === "\\") {
 			escape = true;
 		} else {
-			str += value[i];
+			str += rawStr[i];
 		}
 	}
 
 	return str + String.fromCharCode(0);
 }
 
-export function parseChar(value) {
-	if (value.length === 3) {
-		return value.charCodeAt(1);
+export function parseChar(rawChar) {
+	if (rawChar.length === 3) {
+		return rawChar.charCodeAt(1);
 	}
 
-	return parseEscape(value[2]);
+	return parseEscape(rawChar[2]);
 }
 
-export function parseNum(value) {
-	return +value;
+export function parseNum(rawNum) {
+	return +rawNum;
 }

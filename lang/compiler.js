@@ -4,24 +4,25 @@ import {
 	isValidVar,
 	isValidInt,
 	isValidFloat,
+	isValidMacro,
 } from "./validator.js";
 import {
 	parseInsts,
 	parseStr,
 	parseChar,
-	parseNum
+	parseNum,
+	parseMacro
 } from "./parser.js";
 import {
 	syntaxKinds,
-	getDirective,
-	getOpcode,
+	directives,
+	opcodes,
 } from "./enum.js";
 import {
 	strCopy,
 	alloc
 } from "./runtime.js";
 import { processDirective } from "./processor.js";
-import { expandMacros } from "./macro.js";
 import { getIdentifier } from "./identifier.js";
 import { pushError as error } from "./error.js";
 
@@ -38,7 +39,19 @@ function getInstInfo(inst) {
 	for (let i = 1; i < inst.length; ++i) {
 		const value = inst[i];
 
-		if (isValidStr(value)) {
+		if (isValidMacro(value)) {
+			const info = parseMacro(value);
+
+			if (info === false) {
+				error(`invalid macro: ${value}`);
+				return false;
+			}
+
+			const { kind, macro } = info;
+			kinds.push(kind);
+			values.push(macro);
+
+		} else if (isValidStr(value)) {
 			kinds.push(syntaxKinds.str);
 
 			const str = parseStr(value);
@@ -85,14 +98,7 @@ export async function compile(rawInsts) {
 		return false;
 	}
 
-	const newInsts = expandMacros(insts);
-
-	if (newInsts === false) {
-		error("failed to expand macros");
-		return false;
-	}
-
-	if (newInsts.length === 0) {
+	if (insts.length === 0) {
 		return new Float64Array();
 	}
 
@@ -100,7 +106,7 @@ export async function compile(rawInsts) {
 
 	line = 0;
 
-	for (const inst of newInsts) {
+	for (const inst of insts) {
 		const info = getInstInfo(inst);
 
 		if (info === false) {
@@ -111,12 +117,12 @@ export async function compile(rawInsts) {
 		const { kinds, values } = info;
 
 		const rawOpcode = inst[0];
-		const opcode = getOpcode(rawOpcode);
+		const opcode = opcodes[rawOpcode];
 
-		if (opcode === false) {
-			const directive = getDirective(rawOpcode);
+		if (opcode === undefined) {
+			const directive = directives[rawOpcode];
 
-			if (directive === false) {
+			if (directive === undefined) {
 				error(`invalid directive or opcode: ${rawOpcode}`);
 				return false;
 			}

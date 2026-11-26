@@ -3,8 +3,8 @@
 - up + down arrow
 - more shortcuts
 - lines
-- remove macros
 - fix jumps
 - load, load_t, jmp, exit checking
 - reset memory
 - line handling
+- manual switch values in runtime

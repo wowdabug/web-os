@@ -1,7 +1,5 @@
 export const macros = enumerate([
-	"clear",
-	"print",
-	"print_line"
+	"line"
 ]);
 
 export const directives = enumerate([
@@ -71,6 +69,7 @@ export const opcodes = enumerate([
 ]);
 
 export const syntaxKinds = enumerate([
+	"promise",
 	"str",
 	"char",
 	"var",
@@ -97,36 +96,6 @@ function enumerate(arr) {
 			return acc;
 		}, {})
 	);
-}
-
-export function getMacro(value) {
-	const macro = macros[value];
-
-	if (macro === undefined) {
-		return false;
-	}
-
-	return macro;
-}
-
-export function getDirective(value) {
-	const directive = directives[value];
-
-	if (directive === undefined) {
-		return false;
-	}
-
-	return directive;
-}
-
-export function getOpcode(value) {
-	const opcode = opcodes[value];
-
-	if (opcode === undefined) {
-		return false;
-	}
-
-	return opcode;
 }
 
 export function getType(directive) {
@@ -159,7 +128,7 @@ export function getType(directive) {
 		case directives.arr_f64:
 			return dataTypes.f64;
 		default:
-			throw new Error(`Invalid or unimplemented directive: ${directive}`);
+			throw new Error(`Invalid directive value: ${directive}`);
 	}
 }
 
@@ -179,7 +148,7 @@ export function getWidth(type) {
 		case dataTypes.f64:
 			return 4;
 		default:
-			throw new Error(`Invalid or unimplemented type: ${type}`);
+			throw new Error(`Invalid type value: ${type}`);
 	}
 }
 
@@ -194,6 +163,6 @@ export function getSigned(type) {
 		case dataTypes.u32:
 			return false;
 		default:
-			throw new Error(`Invalid or unimplemented type: ${type}`);
+			throw new Error(`Invalid type value: ${type}`);
 	}
 }
