@@ -4,16 +4,11 @@ const output = document.getElementById("output");
 const input = document.getElementById("input");
 
 const semanticRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gm;
-const version = "0.1.1";
+const version = "0.1.2";
 
 let currentInput = input.lastElementChild;
 let inputEnabled = true;
 let buffer = "";
-
-export function flushBuffer() {
-	output.textContent += buffer;
-	buffer = "";
-}
 
 export function bufferStr(value) {
 	buffer += value;
@@ -52,6 +47,10 @@ export function bufferInt(value) {
 }
 
 export function bufferFloat(value) {
+	if (value === undefined) {
+		return;
+	}
+
 	if (Number.isNaN(value)) {
 		buffer += "nan";
 		return;
@@ -73,6 +72,11 @@ export function bufferFloat(value) {
 	}
 
 	buffer += value.toFixed(6);
+}
+
+export function flushBuffer() {
+	output.textContent += buffer;
+	buffer = "";
 }
 
 export function outLine(text) {

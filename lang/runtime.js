@@ -1,10 +1,10 @@
 import {
-	flushBuffer,
 	bufferStr,
 	bufferChar,
 	bufferPtr,
 	bufferInt,
-	bufferFloat
+	bufferFloat,
+	flushBuffer
 } from "../main.js";
 import {
 	opcodes,
@@ -13,7 +13,7 @@ import {
 
 const memSize = 1024 * 1024;
 const stackSize = 1024;
-const memOffset = 1024;
+const memOffset = 4;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -98,15 +98,12 @@ function outStr(ptr) {
 }
 
 export async function execute(program) {
-
 	for (let i = 0; i < program.length; i += 2) {
 
 		const opcode = program[i];
 		const operand = program[i + 1];
 
 		switch (opcode) {
-			case opcodes.exit:
-				return operand;
 			case opcodes.load:
 				stack[stackPtr++] = operand; break;
 			case opcodes.load_i8:
@@ -155,8 +152,20 @@ export async function execute(program) {
 				stack[stackPtr - 2] = stack[stackPtr - 2] / stack[stackPtr - 1]; --stackPtr; break;
 			case opcodes.mod:
 				stack[stackPtr - 2] = stack[stackPtr - 2] % stack[stackPtr - 1]; --stackPtr; break;
-			case opcodes.flush:
-				flushBuffer(); break;
+			case opcodes.ife:
+				if (stack[--stackPtr] !== stack[--stackPtr]) i += 2; break;
+			case opcodes.ifne:
+				if (stack[--stackPtr] === stack[--stackPtr]) i += 2; break;
+			case opcodes.ifl:
+				if (stack[--stackPtr] <= stack[--stackPtr]) i += 2; break;
+			case opcodes.ifle:
+				if (stack[--stackPtr] < stack[--stackPtr]) i += 2; break;
+			case opcodes.ifg:
+				if (stack[--stackPtr] >= stack[--stackPtr]) i += 2; break;
+			case opcodes.ifge:
+				if (stack[--stackPtr] > stack[--stackPtr]) i += 2; break;
+			case opcodes.jmp:
+				i = operand << 1; break;
 			case opcodes.out_str:
 				outStr(stack[--stackPtr]); break;
 			case opcodes.out_char:
@@ -167,6 +176,12 @@ export async function execute(program) {
 				bufferInt(stack[--stackPtr]); break;
 			case opcodes.out_float:
 				bufferFloat(stack[--stackPtr]); break;
+			case opcodes.flush:
+				flushBuffer(); break;
+			case opcodes.exit:
+				return opcode;
+			case opcodes.test:
+				console.log("test"); break;
 			default:
 				throw new Error(`Invalid or unimplemented opcode: ${opcode}`);
 		}

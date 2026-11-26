@@ -1,7 +1,10 @@
-- finish lang
-- system commands
+- commands
 - file system
 - up + down arrow
 - more shortcuts
-- restructure errors
-- current line, lines in errors
+- lines
+- remove macros
+- fix jumps
+- load, load_t, jmp, exit checking
+- reset memory
+- line handling

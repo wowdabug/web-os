@@ -53,7 +53,6 @@ export const opcodes = enumerate([
 	"mul",
 	"div",
 	"mod",
-	"cmp",
 	"ife",
 	"ifne",
 	"ifl",
@@ -67,7 +66,8 @@ export const opcodes = enumerate([
 	"out_ptr",
 	"out_int",
 	"out_float",
-	"exit"
+	"exit",
+	"test"
 ]);
 
 export const syntaxKinds = enumerate([
