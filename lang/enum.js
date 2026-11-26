@@ -159,7 +159,7 @@ export function getType(directive) {
 		case directives.arr_f64:
 			return dataTypes.f64;
 		default:
-			throw new Error();
+			throw new Error(`Invalid or unimplemented directive: ${directive}`);
 	}
 }
 
@@ -179,7 +179,7 @@ export function getWidth(type) {
 		case dataTypes.f64:
 			return 4;
 		default:
-			throw new Error();
+			throw new Error(`Invalid or unimplemented type: ${type}`);
 	}
 }
 
@@ -194,6 +194,6 @@ export function getSigned(type) {
 		case dataTypes.u32:
 			return false;
 		default:
-			throw new Error();
+			throw new Error(`Invalid or unimplemented type: ${type}`);
 	}
 }

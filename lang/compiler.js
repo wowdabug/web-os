@@ -116,7 +116,7 @@ export async function compile(rawInsts) {
 		if (opcode === false) {
 			const directive = getDirective(rawOpcode);
 
-			if (directive === undefined) {
+			if (directive === false) {
 				error(`invalid directive or opcode: ${rawOpcode}`);
 				return false;
 			}
