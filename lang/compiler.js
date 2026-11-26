@@ -155,6 +155,10 @@ export async function compile(rawInsts) {
 			operand = ptr;
 		}
 
+		if (opcode === opcodes.jmp) {
+			operand = (operand - 1) << 1
+		}
+
 		rawProgram.push(opcode, operand);
 
 		++line;

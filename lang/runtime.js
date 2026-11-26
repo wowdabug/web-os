@@ -165,7 +165,7 @@ export async function execute(program) {
 			case opcodes.ifge:
 				if (stack[--stackPtr] > stack[--stackPtr]) i += 2; break;
 			case opcodes.jmp:
-				i = operand << 1; break;
+				i = operand; break;
 			case opcodes.out_str:
 				outStr(stack[--stackPtr]); break;
 			case opcodes.out_char:
