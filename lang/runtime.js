@@ -178,6 +178,8 @@ export async function execute(program) {
 				bufferFloat(stack[--stackPtr]); break;
 			case opcodes.flush:
 				flushBuffer(); break;
+			case opcodes.sleep:
+				await new Promise((resolve) => setTimeout(resolve, stack[--stackPtr])); break;
 			case opcodes.exit:
 				return opcode;
 			case opcodes.test:

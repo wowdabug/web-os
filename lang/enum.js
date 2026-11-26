@@ -64,6 +64,7 @@ export const opcodes = enumerate([
 	"out_ptr",
 	"out_int",
 	"out_float",
+	"sleep",
 	"exit",
 	"test"
 ]);

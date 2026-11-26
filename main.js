@@ -118,9 +118,17 @@ function appendText(text) {
 	currentInput.textContent += text;
 }
 
+function enableInput() {
+	inputEnabled = true;
+}
+
+function disableInput() {
+	inputEnabled = false;
+}
+
 async function parseInput(value) {
 	await run(value);
-	inputEnabled = true;
+	enableInput();
 }
 
 function handleKeydown(event) {
@@ -140,7 +148,7 @@ function handleKeydown(event) {
 		if (event.shiftKey) {
 			appendLine();
 		} else {
-			inputEnabled = false;
+			disableInput();
 			const text = resetInput();
 			parseInput(text);
 		}
