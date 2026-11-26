@@ -111,37 +111,37 @@ export async function execute(program) {
 			case opcodes.load_u8:
 				stack[stackPtr++] = memU8[operand]; break;
 			case opcodes.load_i16:
-				stack[stackPtr++] = memView.getInt16(operand); break;
+				stack[stackPtr++] = memView.getInt16(operand, true); break;
 			case opcodes.load_u16:
-				stack[stackPtr++] = memView.getUint16(operand); break;
+				stack[stackPtr++] = memView.getUint16(operand, true); break;
 			case opcodes.load_i32:
-				stack[stackPtr++] = memView.getInt32(operand); break;
+				stack[stackPtr++] = memView.getInt32(operand, true); break;
 			case opcodes.load_u32:
-				stack[stackPtr++] = memView.getUint32(operand); break;
+				stack[stackPtr++] = memView.getUint32(operand, true); break;
 			case opcodes.load_f16:
-				stack[stackPtr++] = memView.getFloat16(operand); break;
+				stack[stackPtr++] = memView.getFloat16(operand, true); break;
 			case opcodes.load_f32:
-				stack[stackPtr++] = memView.getFloat32(operand); break;
+				stack[stackPtr++] = memView.getFloat32(operand, true); break;
 			case opcodes.load_f64:
-				stack[stackPtr++] = memView.getFloat64(operand); break;
+				stack[stackPtr++] = memView.getFloat64(operand, true); break;
 			case opcodes.store_i8:
 				memI8[stack[stackPtr - 2]] = stack[stackPtr - 1]; stackPtr -= 2; break;
 			case opcodes.store_u8:
 				memU8[stack[stackPtr - 2]] = stack[stackPtr - 1]; stackPtr -= 2; break;
 			case opcodes.store_i16:
-				memView.setInt16(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setInt16(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_u16:
-				memView.setUint16(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setUint16(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_i32:
-				memView.setInt32(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setInt32(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_u32:
-				memView.setUint32(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setUint32(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_f16:
-				memView.setFloat16(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setFloat16(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_f32:
-				memView.setFloat32(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setFloat32(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.store_f64:
-				memView.setFloat64(stack[stackPtr - 2], stack[stackPtr - 1]); stackPtr -= 2; break;
+				memView.setFloat64(stack[stackPtr - 2], stack[stackPtr - 1], true); stackPtr -= 2; break;
 			case opcodes.add:
 				stack[stackPtr - 2] = stack[stackPtr - 2] + stack[stackPtr - 1]; --stackPtr; break;
 			case opcodes.sub:

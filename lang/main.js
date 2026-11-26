@@ -54,6 +54,8 @@ export async function run(value) {
 		return false;
 	}
 
+	console.log(program);
+
 	if (program.length === 0) {
 		return true;
 	}

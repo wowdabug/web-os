@@ -69,7 +69,7 @@ export const opcodes = enumerate([
 ]);
 
 export const syntaxKinds = enumerate([
-	"promise",
+	// "promise",
 	"str",
 	"char",
 	"var",
@@ -144,9 +144,9 @@ export function getWidth(type) {
 		case dataTypes.i32:
 		case dataTypes.u32:
 		case dataTypes.f32:
-			return 3;
-		case dataTypes.f64:
 			return 4;
+		case dataTypes.f64:
+			return 8;
 		default:
 			throw new Error(`Invalid type value: ${type}`);
 	}

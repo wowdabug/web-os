@@ -1,2 +1,0 @@
-load_imm "Hello, w'orld!" 'a' '
-out_str

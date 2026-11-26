@@ -73,10 +73,12 @@ function processVariable(directive, kinds, values) {
 }
 
 function processArray(directive, kinds, values) {
+	const length = values[1];
+
 	const valid =
 		kinds.length >= 2 &&
 		kinds[0] === syntaxKinds.var &&
-		isInfoValidPtr(kinds[1], values[1]);
+		isInfoValidPtr(kinds[1], length);
 
 	if (!valid) {
 		error("invalid array declaration");
@@ -93,7 +95,7 @@ function processArray(directive, kinds, values) {
 	}
 
 	if (kinds.length > 2) {
-		if (kinds.length - 2 !== values[1]) {
+		if (kinds.length - 2 !== length) {
 			error("a");
 			return false;
 		}
@@ -119,7 +121,9 @@ function processArray(directive, kinds, values) {
 			}
 		}
 
-		arrCopy(values[1], width, type, ptr, values, 2)
+		for (let i = 0; i < length; ++i) {
+			varCopy(type, ptr + (i * width), values[i + 2]);
+		}
 	}
 
 	const success = setIdentifier(values[0], ptr);
