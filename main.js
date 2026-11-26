@@ -2,7 +2,7 @@ import { enableInput } from "./sys/input.js";
 import { outLine } from "./sys/output.js";
 
 export const version =
-	generateVersion("0.2.6");
+	generateVersion("0.2.7");
 
 function generateVersion(rawVersion) {
 	const match = rawVersion.match(

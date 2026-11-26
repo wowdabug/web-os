@@ -60,12 +60,9 @@ body {
 	position: absolute;
 	left: 0;
 	top: 50%;
+	margin-left: calc(var(--cursor-width) * -0.5);
 	transform: translateY(-50%);
 	width: var(--cursor-width);
 	height: 1em;
 	background-color: var(--text-color);
-	animation-name: blink;
-	animation-iteration-count: infinite;
-	animation-duration: var(--cursor-blink);
-	animation-timing-function: step-end;
 }
