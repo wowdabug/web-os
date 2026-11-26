@@ -1,7 +1,7 @@
 import { syntaxKinds } from "./enum.js";
 
 const charRegex = /^'[^\\']'$/;
-const varRegex = /^[a-z_][\da-z_]*$/i;
+const idRegex = /^[a-z_][\da-z_]*$/i;
 const intRegex = /^-?(0|[1-9]\d*)$/;
 const floatRegex = /^-?(0|[1-9]\d*)\.\d*$/;
 
@@ -26,7 +26,7 @@ function isValidEscape(value) {
 export function isValidMacro(value) {
 	return (
 		value.startsWith("#") &&
-		varRegex.test(value.slice(1))
+		idRegex.test(value.slice(1))
 	);
 }
 
@@ -78,8 +78,8 @@ export function isValidChar(value) {
 	return false;
 }
 
-export function isValidVar(value) {
-	return varRegex.test(value);
+export function isValidIdentifier(value) {
+	return idRegex.test(value);
 }
 
 export function isValidInt(value) {
@@ -105,7 +105,7 @@ function isValidRange(int, width, signed) {
 
 export function isInfoValidInt(operandKind, value, width, signed) {
 	return (
-		operandKind !== syntaxKinds.var &&
+		operandKind !== syntaxKinds.id &&
 		operandKind !== syntaxKinds.float &&
 		isValidRange(value, width, signed)
 	);
@@ -113,9 +113,9 @@ export function isInfoValidInt(operandKind, value, width, signed) {
 
 export function isInfoValidPtr(operandKind, value) {
 	return (
-		operandKind !== syntaxKinds.var &&
+		operandKind !== syntaxKinds.id &&
 		operandKind !== syntaxKinds.float &&
-		value > 0 &&
+		value >= 0 &&
 		value < 4294967296
 	);
 }

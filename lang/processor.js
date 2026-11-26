@@ -8,7 +8,6 @@ import {
 } from "./enum.js";
 import {
 	varCopy,
-	arrCopy,
 	alloc
 } from "./runtime.js";
 import {
@@ -19,17 +18,17 @@ import {
 	isInfoValidInt,
 	isInfoValidPtr
 } from "./validator.js";
-import { pushError as error } from "./error.js";
+import { pushError } from "./error.js";
 import { getLine } from "./compiler.js";
 
 function processVariable(directive, kinds, values) {
 	const valid =
 		kinds.length >= 1 &&
 		kinds.length <= 2 &&
-		kinds[0] === syntaxKinds.var;
+		kinds[0] === syntaxKinds.id;
 
 	if (!valid) {
-		error("invalid variable declaration");
+		pushError("invalid variable declaration");
 		return false;
 	}
 
@@ -38,7 +37,7 @@ function processVariable(directive, kinds, values) {
 	const ptr = alloc(width);
 
 	if (ptr === false) {
-		error(`out of memory while allocating ${width} bytes for variable: ${values[0]}`);
+		pushError(`out of memory while allocating ${width} bytes for variable: ${values[0]}`);
 		return false;
 	}
 
@@ -47,14 +46,14 @@ function processVariable(directive, kinds, values) {
 
 		if (float) {
 			if (kinds[1] !== syntaxKinds.float) {
-				error(`invalid floating-point initializer for variable: ${values[0]}`);
+				pushError(`invalid floating-point initializer for variable: ${values[0]}`);
 				return false;
 			}
 		} else {
 			const signed = getSigned(type);
 
 			if (!isInfoValidInt(kinds[1], values[1], width, signed)) {
-				error(`invalid integer initializer for variable: ${values[0]}`);
+				pushError(`invalid integer initializer for variable: ${values[0]}`);
 				return false;
 			}
 		}
@@ -65,7 +64,7 @@ function processVariable(directive, kinds, values) {
 	const success = setIdentifier(values[0], ptr);
 
 	if (!success) {
-		error("duplicate identifier in variable declaration");
+		pushError("duplicate identifier in variable declaration");
 		return false;
 	}
 
@@ -77,11 +76,11 @@ function processArray(directive, kinds, values) {
 
 	const valid =
 		kinds.length >= 2 &&
-		kinds[0] === syntaxKinds.var &&
+		kinds[0] === syntaxKinds.id &&
 		isInfoValidPtr(kinds[1], length);
 
 	if (!valid) {
-		error("invalid array declaration");
+		pushError("invalid array declaration");
 		return false;
 	}
 
@@ -90,13 +89,13 @@ function processArray(directive, kinds, values) {
 	const ptr = alloc(width);
 
 	if (ptr === false) {
-		error(`out of memory while allocating ${width} bytes for array: ${values[0]}`);
+		pushError(`out of memory while allocating ${width} bytes for array: ${values[0]}`);
 		return false;
 	}
 
 	if (kinds.length > 2) {
 		if (kinds.length - 2 !== length) {
-			error("a");
+			pushError("a");
 			return false;
 		}
 
@@ -105,7 +104,7 @@ function processArray(directive, kinds, values) {
 		if (float) {
 			for (let i = 2; i < kinds.length; ++i) {
 				if (kinds[i] !== syntaxKinds.float) {
-					error(`invalid floating-point initializer for array: ${values[0]}`);
+					pushError(`invalid floating-point initializer for array: ${values[0]}`);
 					return false;
 				}
 			}
@@ -115,7 +114,7 @@ function processArray(directive, kinds, values) {
 
 			for (let i = 2; i < kinds.length; ++i) {
 				if (!isInfoValidInt(kinds[i], values[i], width, signed)) {
-					error(`invalid integer initializer for array: ${values[0]}`);
+					pushError(`invalid integer initializer for array: ${values[0]}`);
 					return false;
 				}
 			}
@@ -129,7 +128,7 @@ function processArray(directive, kinds, values) {
 	const success = setIdentifier(values[0], ptr);
 
 	if (!success) {
-		error("duplicate identifier in array declaration");
+		pushError("duplicate identifier in array declaration");
 		return false;
 	}
 
@@ -139,18 +138,18 @@ function processArray(directive, kinds, values) {
 function processPointer(kinds, values) {
 	const valid =
 		kinds.length === 2 &&
-		kinds[0] === syntaxKinds.var &&
+		kinds[0] === syntaxKinds.id &&
 		isInfoValidPtr(kinds[1], values[1]);
 
 	if (!valid) {
-		error("invalid format in pointer delcaration");
+		pushError("invalid format in pointer delcaration");
 		return false;
 	}
 
 	const success = setIdentifier(values[0], values[1]);
 
 	if (!success) {
-		error(`duplicate identifier in pointer declaration: ${values[0]}`);
+		pushError(`duplicate identifier in pointer declaration: ${values[0]}`);
 		return false;
 	}
 
@@ -159,19 +158,19 @@ function processPointer(kinds, values) {
 
 function processLabel(kinds, values) {
 	if (kinds.length !== 1) {
-		error("expected one argument in label declaration");
+		pushError("expected one argument in label declaration");
 		return false;
 	}
 
-	if (kinds[0] !== syntaxKinds.var) {
-		error("expected identifier in label declaration");
+	if (kinds[0] !== syntaxKinds.id) {
+		pushError("expected identifier in label declaration");
 		return false;
 	}
 
 	const success = setIdentifier(values[0], getLine());
 
 	if (!success) {
-		error(`duplicate identifier in label declaration: ${values[0]}`);
+		pushError(`duplicate identifier in label declaration: ${values[0]}`);
 		return false;
 	}
 
@@ -179,13 +178,13 @@ function processLabel(kinds, values) {
 }
 
 function processDelete(kinds, values) {
-	if (kinds[0] !== syntaxKinds.var) {
-		error("invalid delete declaration");
+	if (kinds[0] !== syntaxKinds.id) {
+		pushError("invalid delete declaration");
 		return false;
 	}
 
 	if (!deleteIdentifier(values[0])) {
-		error(`undefined identifier in delete declaration: ${values[0]}`);
+		pushError(`undefined identifier in delete declaration: ${values[0]}`);
 		return false;
 	}
 

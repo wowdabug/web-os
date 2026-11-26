@@ -71,12 +71,6 @@ export function varCopy(type, ptr, value) {
 	}
 }
 
-export function arrCopy(length, width, type, ptr, values, offset) {
-	for (let i = 0; i < length; ++i) {
-		varCopy(type, ptr + (i * width), values[i + offset]);
-	}
-}
-
 export function alloc(width) {
 	const ptr = memPtr;
 

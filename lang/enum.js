@@ -73,8 +73,9 @@ export const syntaxKinds = enumerate([
 	// "promise",
 	"str",
 	"char",
-	"var",
+	"id",
 	"int",
+	// "uint",
 	"float"
 ]);
 

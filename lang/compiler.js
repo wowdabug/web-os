@@ -1,7 +1,7 @@
 import {
 	isValidStr,
 	isValidChar,
-	isValidVar,
+	isValidIdentifier,
 	isValidInt,
 	isValidFloat,
 	isValidMacro,
@@ -24,7 +24,7 @@ import {
 } from "./runtime.js";
 import { processDirective } from "./processor.js";
 import { getIdentifier } from "./identifier.js";
-import { pushError as error } from "./error.js";
+import { pushError } from "./error.js";
 
 let line = 0;
 
@@ -43,7 +43,7 @@ function getInstInfo(inst) {
 			const info = parseMacro(value);
 
 			if (info === false) {
-				error(`invalid macro: ${value}`);
+				pushError(`invalid macro: ${value}`);
 				return false;
 			}
 
@@ -58,7 +58,7 @@ function getInstInfo(inst) {
 			const ptr = alloc(str.length);
 
 			if (ptr === false) {
-				error(`out of memory while allocating ${str.length} bytes for string: ${value}`);
+				pushError(`out of memory while allocating ${str.length} bytes for string: ${value}`);
 				return false;
 			}
 
@@ -69,8 +69,8 @@ function getInstInfo(inst) {
 			kinds.push(syntaxKinds.char);
 			values.push(parseChar(value));
 
-		} else if (isValidVar(value)) {
-			kinds.push(syntaxKinds.var);
+		} else if (isValidIdentifier(value)) {
+			kinds.push(syntaxKinds.id);
 			values.push(value);
 
 		} else if (isValidInt(value)) {
@@ -82,7 +82,7 @@ function getInstInfo(inst) {
 			values.push(parseNum(value));
 
 		} else {
-			error(`invalid operand: ${value}`);
+			pushError(`invalid operand: ${value}`);
 			return false;
 		}
 	}
@@ -94,7 +94,7 @@ export async function compile(rawInsts) {
 	const insts = parseInsts(rawInsts);
 
 	if (insts === false) {
-		error("unterminated string, character, or escape sequence");
+		pushError("unterminated string, character, or escape sequence");
 		return false;
 	}
 
@@ -110,7 +110,7 @@ export async function compile(rawInsts) {
 		const info = getInstInfo(inst);
 
 		if (info === false) {
-			error("failed to retrieve instruction info");
+			pushError("failed to retrieve instruction info");
 			return false;
 		}
 
@@ -123,7 +123,7 @@ export async function compile(rawInsts) {
 			const directive = directives[rawOpcode];
 
 			if (directive === undefined) {
-				error(`invalid directive or opcode: ${rawOpcode}`);
+				pushError(`invalid directive or opcode: ${rawOpcode}`);
 				return false;
 			}
 
@@ -132,7 +132,7 @@ export async function compile(rawInsts) {
 			if (success) {
 				continue;
 			} else {
-				error(`failed to process directive: ${rawOpcode}`);
+				pushError(`failed to process directive: ${rawOpcode}`);
 				return false;
 			}
 		}
@@ -144,11 +144,11 @@ export async function compile(rawInsts) {
 
 		let operand = firstValue ?? 0;
 
-		if (firstKind === syntaxKinds.var) {
+		if (firstKind === syntaxKinds.id) {
 			const ptr = getIdentifier(firstValue);
 
 			if (ptr === false) {
-				error(`undeclared variable: ${firstValue}`);
+				pushError(`undeclared variable: ${firstValue}`);
 				return false;
 			}
 
