@@ -5,7 +5,7 @@ import {
 	bufferInt,
 	bufferFloat,
 	flushBuffer
-} from "../main.js";
+} from "../sys/output.js";
 import {
 	opcodes,
 	dataTypes
@@ -181,7 +181,7 @@ export async function execute(program) {
 			case opcodes.sleep:
 				await new Promise((resolve) => setTimeout(resolve, stack[--stackPtr])); break;
 			case opcodes.exit:
-				return opcode;
+				return operand;
 			case opcodes.test:
 				console.log("test"); break;
 			default:

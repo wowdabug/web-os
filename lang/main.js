@@ -9,9 +9,12 @@ import {
 	restoreIdentifiers,
 	resetIdentifiers
 } from "./identifier.js";
+import {
+	logErrors,
+	pushError
+} from "./error.js";
 import { compile } from "./compiler.js";
-import { outLine } from "../main.js";
-import { logErrors } from "./error.js";
+import { outLine } from "../sys/output.js";
 
 let prevTime;
 
@@ -54,7 +57,7 @@ export async function run(value) {
 		return false;
 	}
 
-	console.log(program);
+	// console.log(program);
 
 	if (program.length === 0) {
 		return true;
@@ -65,7 +68,8 @@ export async function run(value) {
 	endBench("Executed in ", "ms");
 
 	if (exitStatus !== 0) {
-		outLine(`Runtime error: exit status ${exitStatus}`);
+		pushError(`exit status: ${exitStatus}`)
+		logErrors();
 		return false;
 	}
 

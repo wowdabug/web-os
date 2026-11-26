@@ -1,4 +1,4 @@
-import { outLine } from "../main.js";
+import { outLine } from "../sys/output.js";
 
 const errors = [];
 
@@ -6,22 +6,22 @@ function resetErrors() {
 	errors.length = 0;
 }
 
-export function logErrors(fallback, prefix) {
+export function logErrors() {
 	if (errors.length === 0) {
-		outLine(fallback);
-	}
-
-	if (errors.length === 1) {
-		outLine("Compiler error: " + errors[0]);
+		outLine("Unspefified error");
 	} else {
-		outLine("Compiler errors:");
+		if (errors.length === 1) {
+			outLine("Error: " + errors[0]);
+		} else {
+			outLine("Errors:");
 
-		for (let i = errors.length - 1; i >= 0; --i) {
-			outLine(`- ${errors[i]}`);
+			for (let i = errors.length - 1; i >= 0; --i) {
+				outLine(`- ${errors[i]}`);
+			}
 		}
-	}
 
-	resetErrors();
+		resetErrors();
+	}
 }
 
 export function pushError(error) {
